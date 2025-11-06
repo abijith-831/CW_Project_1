@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address Book</title>
+    <link rel="stylesheet" href="./styles.css">
+     <link rel="stylesheet" href="https://cdn.tutorialjinni.com/intl-tel-input/17.0.19/css/intlTelInput.css"/>
+    <link
+     rel="stylesheet"
+     href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+   />
+   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap');
+    </style>
+</head>
+<body>
+    <div   class="flex flex-col w-full h-full items-center bg-[url('/public/bg-main-white.jpg')] bg-cover bg-center">
+            <div id="headingDiv"   class="p-4 hidden flex  items-center justify-center ">
+                <h1 class="caveat-brush-regular font-bold text-xl md:text-2xl lg:text-4xl">Address Form</h1>
+            </div>
+        <div id="formDiv" class="flex items-center hidden justify-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-lg border bg-gray-100 p-6 rounded-xl ">
+            
+            <form action="" id="addressForm" class="space-y-3 " > 
+                <div class=" flex items-center justify-between caveat-brush-regular">
+                    <label class="text-sm md:text-md  lg:text-xl" for="firstName " > First Name : </label>
+                    <input class="border ml-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rounded-md w-[300px] px-2 mx-2" id="firstName" name="firstName" type="text" pattern="[A-Za-z\s]+" title="name should only contain alphabets and spaces"  placeholder="enter your first name " minlength="3" maxlength="25">       
+                </div>
+             
+                <div class=" flex items-center justify-between caveat-brush-regular">
+                    <label class="text-sm md:text-md  lg:text-xl" for="lastName">Last Name : </label>
+                    <input id="lastName" class="shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border rounded-md w-[300px] px-2 mx-2"  type="text" placeholder="enter your last name" pattern="[A-Za-z\s]+" title="name should only contain alphabets and spaces" minlength="3" maxlength="25">
+                </div>
+
+                <div class=" flex items-center justify-between caveat-brush-regular">   
+                    <label class="text-sm md:text-md  lg:text-xl" for="">Address : </label>
+                    <textarea id="address" class="shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border rounded-md w-[300px] px-2 mx-2"  type="text" placeholder="enter the address here" minlength="3" maxlength="500"></textarea>
+                </div> 
+
+                <div class=" flex items-center justify-between caveat-brush-regular">   
+                    <label class="text-sm md:text-md  lg:text-xl" >Phone Number : </label>
+                    <input  class="shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border rounded-md w-[300px] px-2 mx-2"  id="phone" name="phone" type="text"  pattern="\d{10}" maxlength="10" title="phone number should be 10 digits" placeholder="enter your number">
+                </div> 
+
+                <div class=" flex items-center justify-between caveat-brush-regular">
+                    <label class="text-sm md:text-md  lg:text-xl" for=""> Mobile Number : </label>
+                    <input id="mobile" class="shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border rounded-md w-[300px] ml-4 px-2 mx-2" type="text"  pattern="\d{10}" maxlength="10" title="phone number should be 10 digits"  placeholder="enter your mobile">
+                </div>
+
+                <div class=" flex items-center justify-between caveat-brush-regular">
+                    <label class="text-sm md:text-md  lg:text-xl" for="">Email : </label>
+                    <input list="subdomains" id="email" class="shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border rounded-md w-[300px] px-2 mx-2"  type="email" name="email" placeholder="enter your email here">
+                    <datalist id="subdomains">
+                        <option value=".com">
+                        <option value=".in">
+                        <option value=".net">
+                    </datalist>
+                </div>
+                    
+                <div class="flex items-center w-full justify-between mt-4 text-xl">
+                    <button id="resetBtn" type="reset"  class="caveat-brush-regular shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] border cursor-pointer rounded-full px-6 py-1 text-sm md:text-md lg:text-xl bg-red-400 hover:bg-red-500">
+                        Reset
+                    </button>
+                    <button id="submitButton" class="border shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] caveat-brush-regular cursor-pointer rounded-full px-6 py-1 text-sm md:text-md lg:text-xl bg-gray-200 text-black transform transition-transform duration-300 hover:scale-105 mx-auto">
+                        Submit
+                    </button>
+                </div>
+                
+                <p id="message" class="mt-4 min-h-[4rem] caveat-brush-regular  text-lg font-semibold text-center text-green-600 hidden "></p>
+            </form>
+        </div>
+
+        <h1 class="font-bold text-xl md:text-2xl lg:text-4xl mt-4 caveat-brush-regular">Address cards</h1>
+        <div class="flex justify-end items-center my-4">
+            <div class="flex bg-gray-200 cursor-pointer shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] rounded-full overflow-hidden text-xl ">
+                <button id="cardViewBtn" class="caveat-brush-regular cursor-pointer px-8 py-1 bg-black text-white transition-all duration-500">
+                    Card
+                </button>
+                <button id="listViewBtn" class="caveat-brush-regular cursor-pointer px-8  py-1 transition-all duration-500">
+                    List
+                </button>
+            </div>
+        </div>
+
+       
+
+        <div id="addressList" >
+
+        </div>
+    </div>
+    <div id="modalContainer" class="hidden fixed inset-0  flex justify-center items-center z-50 bg-black/70 backdrop-blur-sm bg-opacity-50">
+        <div class="bg-white rounded-lg shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 w-[90%] max-w-lg relative">
+            <button id="closeModal" class="absolute top-3 right-3  text-black text-xl font-bold">&times;</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script src="./form.js"></script>
+    <script>
+        const emailInput = document.getElementById('email');
+        const subdomains = document.getElementById('subdomains');
+        const options = ['.com', '.in', '.net'];
+
+        emailInput.addEventListener('input', () => {
+            const value = emailInput.value;
+            subdomains.innerHTML = ''; 
+            if (value.includes('@') && value.endsWith('.')) {
+                options.forEach(ext => {
+                    const option = document.createElement('option');
+                    option.value = value + ext.slice(1); 
+                    subdomains.appendChild(option);
+                });
+            }
+        });
+    </script>
+
+
+</body>
+</html>
