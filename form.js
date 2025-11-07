@@ -63,9 +63,7 @@
     if (isEditing) {
       //  ========== update existing contact ==========
       contacts[editingIndex] = contact;
-      showMessage("Address updated successfully", "green");
-      alert('Address updated successfully')
-      
+      alert('Address updated successfully') 
       //========= reset editing mode =============
       isEditing = false;
       editingIndex = -1;
@@ -73,18 +71,14 @@
     } else {
       //======== add new contact ==========
       contacts.unshift(contact);
-      showMessage("Address saved successfully", "green");
       alert('Address saved successfully ')
     }
-
     // ============= s ave updated contacts back to localstorage ==============
     localStorage.setItem("contacts", JSON.stringify(contacts));
 
     form.reset();
     closeModal();
     renderAddressCards();
-    
-
   });
 
   const resetButton = document.getElementById("resetBtn");
@@ -93,8 +87,6 @@
     isEditing = false;
     editingIndex = -1;
   })
-
-
 
     
 //==================== show message ====================
@@ -154,7 +146,6 @@ function renderAddressCards(page = 1, maintainFocus = false) {
   let viewType = localStorage.getItem("viewType") || "card";
   addressList.innerHTML = "";
 
-
  let gridColsClass = '';
   if (viewType) {
     gridColsClass =
@@ -164,7 +155,6 @@ function renderAddressCards(page = 1, maintainFocus = false) {
         ? 'lg:grid-cols-3'
         : 'lg:grid-cols-4';
   }
-
 
   const topBar = document.createElement("div");
   topBar.className = "col-span-full flex flex-col md:flex-row justify-between items-center mb-4 gap-4";
@@ -190,7 +180,6 @@ function renderAddressCards(page = 1, maintainFocus = false) {
     </div>
   `;
 
-
   const rightBar = document.createElement("div");
   rightBar.className = "flex items-center";
   rightBar.innerHTML = `
@@ -201,12 +190,10 @@ function renderAddressCards(page = 1, maintainFocus = false) {
     </select>
 
     <p id="selectedCount" class="ml-4 caveat-brush-regular text-gray-700 font-medium pt-1 text-sm md:text-md lg:text-lg">No Cards selected</p>
-    <button id="DownloadSelectedBtn" disabled onclick="downloadSelected()" 
-      class="shadow-[3px_3px_0px_0px_rgba(0,0,0,0.5)] text-sm md:text-md lg:text-xl caveat-brush-regular bg-gray-400 cursor-not-allowed ml-4 text-white px-4 py-2 rounded-full">
+    <button id="DownloadSelectedBtn" disabled onclick="downloadSelected()"  class="shadow-[3px_3px_0px_0px_rgba(0,0,0,0.5)] text-sm md:text-md lg:text-xl caveat-brush-regular bg-gray-400 cursor-not-allowed ml-4 text-white px-4 py-2 rounded-full">
       Download Selected
     </button>
-    <button id="deleteSelectedBtn" disabled onclick="deleteSelected()" 
-      class="caveat-brush-regular text-sm md:text-md lg:text-xl shadow-[3px_3px_0px_0px_rgba(255,0,0,0.5)] bg-red-300 cursor-not-allowed ml-4 text-white px-4 py-2 rounded-full">
+    <button id="deleteSelectedBtn" disabled onclick="deleteSelected()"  class="caveat-brush-regular text-sm md:text-md lg:text-xl shadow-[3px_3px_0px_0px_rgba(255,0,0,0.5)] bg-red-300 cursor-not-allowed ml-4 text-white px-4 py-2 rounded-full">
       Delete Selected
     </button>
   `;
@@ -251,6 +238,8 @@ closeModal.addEventListener('click', () => {
 
   headingDiv.classList.add('hidden');
   originalParent.classList.add('hidden');
+
+  form.reset()
 });
 
   //=============== modal logic ends ===============
@@ -293,10 +282,9 @@ closeModal.addEventListener('click', () => {
 
 
   if (addresses.length === 0) {
+      addressList.className = ` my-4 bg-gray-200 px-4 bg-gray-300 bg-cover bg-center py-2 text-xl rounded-md gap-6 w-11/12 max-w-8xl h-[700px] `;
     const emptyMsg = document.createElement("p");
-    emptyMsg.textContent = currentSearchQuery 
-      ? `No addresses found for "${currentSearchQuery}"` 
-      : "No addresses found. Please add a new contact!";
+    emptyMsg.textContent = currentSearchQuery  ? `No addresses found for "${currentSearchQuery}"`  : "No addresses found. Please add a new contact!";
     emptyMsg.className = "caveat-brush-regular text-gray-500 text-lg font-medium text-center mt-6 col-span-full";
     addressList.appendChild(emptyMsg);
     return;
@@ -321,241 +309,235 @@ function displayAddresses(paginatedAddresses, start, viewType, currentPage, tota
 }
 
   //============= Card View Display ===============
-  function displayCardView(paginatedAddresses, start, currentPage, totalPages , gridColsClass) {
-    addressList.className =
-      `my-4 bg-gray-200 px-4 bg-gray-300 bg-cover bg-center py-2 text-xl rounded-md grid grid-cols-1 md:grid-cols-2  ${gridColsClass} gap-6 w-11/12 max-w-8xl min-h-[400px]`;
+function displayCardView(paginatedAddresses, start, currentPage, totalPages, gridColsClass) {
+  addressList.className = ` my-4 bg-gray-200 px-4 bg-gray-300 bg-cover bg-center py-2  text-xl rounded-md w-11/12 max-w-8xl`;
 
-    paginatedAddresses.forEach((address, index) => {
-      const actualIndex = start + index;
-      const card = document.createElement("div");
-      card.className =
-        "address-card bg-white bg-[url('/public/bg-main-white.jpg')]  bg-cover bg-center cursor-pointer caveat-brush-regular rounded-lg px-6 py-2 border border-black-2 shadow-[5px_5px_0px_0px_rgba(0,0,0,0.7)] hover:shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] duration-300 relative";
+  const cardsWrapper = document.createElement("div");
+  cardsWrapper.className = `  grid grid-cols-1 sm:grid-cols-2 ${gridColsClass}  gap-6 h-[600px] p-4 overflow-y-auto  scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200`;
+
+  // Add custom scrollbar only once
+  if (!document.getElementById('custom-scrollbar-style')) {
+    const style = document.createElement('style');
+    style.id = 'custom-scrollbar-style';
+    style.innerHTML = `
+      .scrollbar-thin::-webkit-scrollbar { width: 8px; }
+      .scrollbar-thin::-webkit-scrollbar-track { background: #e5e7eb; border-radius: 10px; }
+      .scrollbar-thin::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 10px; }
+      .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+      .scrollbar-thin { scrollbar-width: thin; scrollbar-color: #9ca3af #e5e7eb; }
+    `;
+    document.head.appendChild(style);
+  }
+
+  paginatedAddresses.forEach((address, index) => {
+    const actualIndex = start + index;
+    const card = document.createElement("div");
+
+    card.className = ` address-card bg-white bg-[url('/public/bg-main-white.jpg')] bg-cover bg-center   cursor-pointer caveat-brush-regular rounded-lg border border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,0.7)]  hover:shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 relative   flex flex-col justify-between  w-full min-h-[280px] h-[280px]  <!-- 🔹 Fixed uniform height -->  p-4 `;
 
     card.innerHTML = `
-      <div class="flex items-center justify-between p-4">
-        <div class="flex items-center space-x-4 w-full">
-          <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-300 text-gray-700 text-2xl font-semibold">
-            <h1>${address.firstName[0].toUpperCase()}${address.lastName[0].toUpperCase()}</h1>
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center space-x-4 w-full">
+            <div class="flex items-center justify-center w-14 h-14 rounded-full bg-blue-300 text-gray-700 text-2xl font-semibold">
+              ${address.firstName[0].toUpperCase()}${address.lastName[0].toUpperCase()}
+            </div>
+            <h2 class="text-2xl font-semibold truncate flex-1">
+              ${address.firstName.charAt(0).toUpperCase() + address.firstName.slice(1)}
+              ${address.lastName.charAt(0).toUpperCase() + address.lastName.slice(1)}
+            </h2>
           </div>
-          <h2 class="text-3xl font-semibold text-center flex-1">
-            ${address.firstName.charAt(0).toUpperCase() + address.firstName.slice(1)}
-            ${address.lastName.charAt(0).toUpperCase() + address.lastName.slice(1)}
-          </h2>
+          <input  type="checkbox"   data-index="${actualIndex}" class="hidden contact-checkbox w-5 h-5 ml-4 rounded-full cursor-pointer accent-blue-500" />
         </div>
-        <input 
-          type="checkbox" 
-          data-index="${actualIndex}" 
-          class="hidden contact-checkbox w-5 h-5 ml-4 rounded-full cursor-pointer accent-blue-500"
-        />
+
+        <p class="flex items-center text-base"><strong class="w-20">Address:</strong> 
+          <span class="flex-1  ml-2 pb-1 truncate">${address.address}</span>
+        </p>
+        <p class="flex items-center text-base"><strong class="w-20">Phone:</strong> 
+          <span class="flex-1  ml-2 pb-1 truncate">${address.phone.countryName}-${address.phone.fullNumber}</span>
+        </p>
+        <p class="flex items-center text-base"><strong class="w-20">Mobile:</strong> 
+          <span class="flex-1  ml-2 pb-1 truncate">${address.mobile}</span>
+        </p>
+        <p class="flex items-center text-base"><strong class="w-20">Email:</strong> 
+          <span class="flex-1  ml-2 pb-1 truncate">${address.email}</span>
+        </p>
       </div>
 
-      <p class="flex items-center">
-        <strong class="w-24">Address:</strong>
-        <span class="flex-1 border-b border-dotted border-gray-800 ml-4 pb-1">
-          ${address.address}
-        </span>
-      </p>
-
-      <p class="flex items-center">
-        <strong class="w-24">Phone:</strong>
-        <span class="flex-1 border-b border-dotted border-gray-800 ml-4 pb-1">
-          ${address.phone.fullNumber}
-        </span>
-      </p>
-
-      <p class="flex items-center">
-        <strong class="w-24">Mobile:</strong>
-        <span class="flex-1 border-b border-dotted border-gray-800 ml-4 pb-1">
-          ${address.mobile}
-        </span>
-      </p>
-
-      <p class="flex items-center">
-        <strong class="w-24">Email:</strong>
-        <span class="flex-1 border-b border-dotted border-gray-800 ml-4 pb-1">
-          ${address.email}
-        </span>
-      </p>
-
-      <div class="flex items-center justify-between mt-4">
+      <div class="flex items-center justify-between mt-3">
         <div class="flex gap-2">
-          <button onclick="editAddress(${actualIndex})" class="border border-black bg-blue-400 shadow-[3px_3px_0px_0px_rgba(0,0,255,0.7)] cursor-pointer hover:bg-blue-500 text-white px-3 py-1 rounded-full">
-            Edit
-          </button>
-          <button onclick="deleteContact(${actualIndex})" class="border border-black bg-red-400 shadow-[3px_3px_0px_0px_rgba(255,0,0,1)] cursor-pointer hover:bg-red-500 text-white px-3 py-1 rounded-full">
-            Delete
-          </button>
+          <button onclick="editAddress(${actualIndex})" class="border border-black bg-blue-400 shadow-[3px_3px_0px_0px_rgba(0,0,255,0.7)] cursor-pointer hover:bg-blue-500 text-white px-3 py-1 rounded-full">Edit</button>
+          <button onclick="deleteContact(${actualIndex})" class="border border-black bg-red-400 shadow-[3px_3px_0px_0px_rgba(255,0,0,1)] cursor-pointer hover:bg-red-500 text-white px-3 py-1 rounded-full">Delete</button>
         </div>
-        <button onclick="downloadSingle(${actualIndex})" class="shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)] border bg-gray-300 cursor-pointer rounded-full px-4 py-1 hover:bg-gray-400">
-          Download
-        </button>
+        <button onclick="downloadSingle(${actualIndex})" class="border bg-gray-300 hover:bg-gray-400 cursor-pointer rounded-full px-3 py-1 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">Download</button>
       </div>
     `;
 
-    addressList.appendChild(card);
+    cardsWrapper.appendChild(card);
   });
 
-  // Add pagination
+  addressList.appendChild(cardsWrapper);
   addPagination(currentPage, totalPages);
 }
 
-
 //============= List View Display ===============
 function displayListView(paginatedAddresses, start, currentPage, totalPages) {
-  addressList.className =
-    "my-4 bg-gray-200 px-4 py-2 bg-gray-300 bg-cover bg-center text-xl rounded-md w-11/12 max-w-8xl h-[calc(100vh-2rem)] overflow-hidden";
+  addressList.className = ` my-4 bg-gray-200 px-4 bg-gray-300 bg-cover bg-center py-2   text-xl rounded-md w-11/12 max-w-8xl`;
 
   const mainContainer = document.createElement('div');
-  mainContainer.className = 'w-full h-full flex flex-col lg:flex-row gap-4 min-w-[300px] p-2';
+  mainContainer.className = `  w-full h-full flex flex-col lg:flex-row gap-4 p-2   h-[600px]`;
 
+  // Left sidebar
   const leftContent = document.createElement('div');
   leftContent.id = 'leftSidebar';
-  leftContent.className =
-    'w-full lg:w-1/4 bg-white h-[calc(100%-1rem)] overflow-auto rounded-lg pr-6 pl-2 transition-all duration-300 relative';
+  leftContent.className = `  w-full lg:w-1/4 bg-white rounded-lg pr-6 pl-2  relative flex flex-col h-[600px]`;
 
-
+  // Sidebar shrink button
   const shrinkButton = document.createElement('button');
   shrinkButton.id = 'shrinkBtn';
-  shrinkButton.className =
-    'absolute top-1/4 right-1  z-10 bg-gray-400 hover:bg-gray-700 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 lg:block hidden';
+  shrinkButton.className = ` fixed top-1/2 z-50   bg-gray-400 hover:bg-gray-700 text-white  rounded-full w-10 h-10 flex items-center justify-center   shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]  transition-all duration-200 lg:flex hidden`;
   shrinkButton.innerHTML = '<';
   shrinkButton.title = 'Toggle Sidebar';
-
   leftContent.appendChild(shrinkButton);
-
 
   shrinkButton.addEventListener('click', () => {
     leftContent.classList.toggle('sidebar-shrunk');
     shrinkButton.innerHTML = leftContent.classList.contains('sidebar-shrunk') ? '>' : '<';
   });
 
-if (!document.getElementById('sidebar-shrink-style')) {
-  const style = document.createElement('style');
-  style.id = 'sidebar-shrink-style';
-  style.innerHTML = `
-    /* ===== Shrink Sidebar ===== */
-    #leftSidebar.sidebar-shrunk {
-      width: 80px !important;
-      min-width: 150px !important;
-      max-width: 80px !important;
-      padding-left: 0.25rem !important;
-      padding-right: 0.25rem !important;
-      overflow-x: hidden !important;
-      transition: all 0.3s ease-in-out;
-    }
+  // Sidebar shrink styles (once only)
+  if (!document.getElementById('sidebar-shrink-style')) {
+    const style = document.createElement('style');
+    style.id = 'sidebar-shrink-style';
+    style.innerHTML = `
+      /* ===== Shrink Sidebar ===== */
+      #leftSidebar.sidebar-shrunk {
+        width: 80px !important;
+        min-width: 150px !important;
+        max-width: 80px !important;
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+        overflow-x: hidden !important;
+        transition: all 0.3s ease-in-out;
+      }
 
-    /* Hide all inside elements except checkbox + avatar */
-    #leftSidebar.sidebar-shrunk .caveat-brush-regular h1.font-semibold,
-    #leftSidebar.sidebar-shrunk .caveat-brush-regular span,
-    #leftSidebar.sidebar-shrunk .caveat-brush-regular p {
-      display: none !important;
-    }
+      /* Hide elements in shrunk mode */
+      #leftSidebar.sidebar-shrunk .caveat-brush-regular h1.font-semibold,
+      #leftSidebar.sidebar-shrunk .caveat-brush-regular span,
+      #leftSidebar.sidebar-shrunk .caveat-brush-regular p {
+        display: none !important;
+      }
 
-    /* Show compact pagination in shrunk mode */
-    #leftSidebar.sidebar-shrunk #pagination-expanded {
-      display: none !important;
-    }
-    #leftSidebar.sidebar-shrunk #pagination-shrunk {
-      display: flex !important;
-    }
+      #leftSidebar.sidebar-shrunk #pagination-expanded {
+        display: none !important;
+      }
+      #leftSidebar.sidebar-shrunk #pagination-shrunk {
+        display: flex !important;
+      }
 
-    /* In expanded mode, show full pagination and hide compact one */
-    #leftSidebar:not(.sidebar-shrunk) #pagination-expanded {
-      display: flex !important;
-    }
-    #leftSidebar:not(.sidebar-shrunk) #pagination-shrunk {
-      display: none !important;
-    }
+      #leftSidebar:not(.sidebar-shrunk) #pagination-expanded {
+        display: flex !important;
+      }
+      #leftSidebar:not(.sidebar-shrunk) #pagination-shrunk {
+        display: none !important;
+      }
 
-    #leftSidebar.sidebar-shrunk .caveat-brush-regular {
-      justify-content: center !important;
-      flex-direction: row !important;
-      gap: 0.5rem !important;
-    }
+      #leftSidebar.sidebar-shrunk .caveat-brush-regular {
+        justify-content: center !important;
+        flex-direction: row !important;
+        gap: 0.5rem !important;
+      }
 
-    #leftSidebar.sidebar-shrunk ~ div.lg\\:w-3\\/4 {
-      width: 100% !important;
-    }
-  `;
-  document.head.appendChild(style);
-}
+      #leftSidebar.sidebar-shrunk ~ div.lg\\:w-3\\/4 {
+        width: 100% !important;
+      }
 
+      #leftSidebar.sidebar-shrunk .flex.items-center.justify-center.w-12.h-12,
+      #leftSidebar.sidebar-shrunk .flex.items-center.justify-center.w-16.h-16 {
+        width: 40px !important;
+        height: 40px !important;
+        padding:10px;
+        font-size: 1rem !important;
+      }
+
+      #leftSidebar.sidebar-shrunk .caveat-brush-regular {
+        gap: 0.3rem !important;
+        padding:14px;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  const namesContainer = document.createElement('div');
+  namesContainer.className = `  flex-1 overflow-y-auto pr-2 `;
 
   const rightContent = document.createElement('div');
-  rightContent.className =
-    'w-full lg:w-3/4 bg-white h-[calc(100%-1rem)] overflow-auto rounded-lg flex items-center justify-center p-2';
-    
+  rightContent.className = ` w-full lg:w-3/4 bg-white rounded-lg flex items-center   justify-center p-2 h-[600px]`;
+
   const renderDetails = (address, index) => {
     const actualIndex = start + index;
-    rightContent.innerHTML = `
-      <div class="caveat-brush-regular border border-blue-300 bg-blue-50 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-2xl w-full md:w-10/12 p-6 mx-auto flex flex-col items-center text-center space-y-6">
 
-        <!-- ===== Action Buttons ===== -->
-        <div class="flex flex-wrap items-center justify-between w-full mb-6">
-          <div class="flex flex-wrap gap-4">
-            <button onclick="editAddress(${actualIndex})"
-              class="border border-black bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-full shadow-[3px_3px_0px_0px_rgba(0,0,255,0.7)] transition-all duration-200">
+    rightContent.innerHTML = `
+      <div class="caveat-brush-regular border border-blue-300 bg-blue-50   shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] rounded-2xl  w-full max-w-5xl mx-auto p-4 sm:p-6 flex flex-col items-center text-center overflow-y-auto h-full">
+
+        <div class="flex flex-wrap items-center justify-between w-full mb-4 sm:mb-6 gap-3">
+          <div class="flex flex-wrap gap-3 sm:gap-4 justify-center sm:justify-start">
+            <button onclick="editAddress(${actualIndex})" class="border border-black bg-blue-500 hover:bg-blue-600  text-white px-4 sm:px-5 py-2 rounded-full shadow-[3px_3px_0px_0px_rgba(0,0,255,0.7)]   transition-transform duration-200 hover:scale-105">
               Edit
             </button>
-            <button onclick="deleteContact(${actualIndex})"
-              class="border border-black bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-full shadow-[3px_3px_0px_0px_rgba(255,0,0,1)] transition-all duration-200">
+            <button onclick="deleteContact(${actualIndex})" class="border border-black bg-red-500 hover:bg-red-600  text-white px-4 sm:px-5 py-2 rounded-full shadow-[3px_3px_0px_0px_rgba(255,0,0,1)]   transition-transform duration-200 hover:scale-105">
               Delete
             </button>
           </div>
 
-          <div>
-            <button onclick="downloadSingle(${actualIndex})"
-              class="border border-black bg-gray-300 hover:bg-gray-400 text-black px-5 py-2 rounded-full shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)] transition-all duration-200">
+          <div class="mt-2 sm:mt-0">
+            <button onclick="downloadSingle(${actualIndex})" class="border border-black bg-gray-300 hover:bg-gray-400   text-black px-4 sm:px-5 py-2 rounded-full shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]   transition-transform duration-200 hover:scale-105">
               Download
             </button>
           </div>
         </div>
 
-        <!-- ===== Profile Header ===== -->
-        <div class="w-full bg-blue-100 rounded-xl shadow-[5px_5px_0px_0px_rgba(0,0,0,0.8)] border border-black flex flex-col sm:flex-row items-center justify-start gap-6 p-6 mb-8">
-          <div class="w-32 h-32 flex items-center justify-center rounded-full bg-blue-400 text-gray-800 text-5xl font-bold shadow-md border-4 border-white shrink-0">
+        <div class="w-full bg-blue-100 rounded-xl shadow-[5px_5px_0px_0px_rgba(0,0,0,0.8)]   border border-black flex flex-col sm:flex-row items-center  justify-center sm:justify-start gap-4 sm:gap-6 p-4 sm:p-6 mb-6 sm:mb-8">
+          <div class="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center   rounded-full bg-blue-400 text-gray-800 text-4xl sm:text-5xl font-bold shadow-md border-4 border-white shrink-0">
             ${address.firstName[0].toUpperCase()}${address.lastName[0].toUpperCase()}
           </div>
-          <div class="text-center sm:text-left">
-            <h1 class="text-3xl font-bold mb-1 text-gray-900">
+
+          <div class="text-center sm:text-left mt-3 sm:mt-0">
+            <h1 class="text-2xl sm:text-3xl font-bold mb-1 text-gray-900">
               ${address.firstName.charAt(0).toUpperCase() + address.firstName.slice(1)} 
               ${address.lastName.charAt(0).toUpperCase() + address.lastName.slice(1)}
             </h1>
-            <p class="text-gray-700 text-lg italic border-t border-dotted border-gray-500 pt-2 mt-1">
+            <p class="text-gray-700 text-base sm:text-lg italic border-t border-dotted border-gray-500 pt-1 mt-1 break-all">
               ${address.email}
             </p>
           </div>
         </div>
 
-        <!-- ===== Contact Details ===== -->
         <div class="w-full sm:w-10/12 md:w-8/12 text-left space-y-3 text-base sm:text-lg md:text-xl">
           <p class="flex flex-col sm:flex-row items-start sm:items-center">
-            <strong class="w-28">Address:</strong>
-            <span class="flex-1 border-b border-dotted border-gray-800 pb-1 sm:ml-3">${address.address}</span>
+            <strong class="w-28 shrink-0">Address:</strong>
+            <span class="flex-1  pb-1 sm:ml-3 break-words">${address.address}</span>
           </p>
           <p class="flex flex-col sm:flex-row items-start sm:items-center">
-            <strong class="w-28">Phone:</strong>
-            <span class="flex-1 border-b border-dotted border-gray-800 pb-1 sm:ml-3">${address.phone.fullNumber}</span>
+            <strong class="w-28 shrink-0">Phone:</strong>
+            <span class="flex-1  pb-1 sm:ml-3 break-words">${address.phone.fullNumber}</span>
           </p>
           <p class="flex flex-col sm:flex-row items-start sm:items-center">
-            <strong class="w-28">Mobile:</strong>
-            <span class="flex-1 border-b border-dotted border-gray-800 pb-1 sm:ml-3">${address.mobile}</span>
+            <strong class="w-28 shrink-0">Mobile:</strong>
+            <span class="flex-1  pb-1 sm:ml-3 break-words">${address.mobile}</span>
           </p>
           <p class="flex flex-col sm:flex-row items-start sm:items-center">
-            <strong class="w-28">Email:</strong>
-            <span class="flex-1 border-b border-dotted border-gray-800 pb-1 sm:ml-3">${address.email}</span>
+            <strong class="w-28 shrink-0">Email:</strong>
+            <span class="flex-1  pb-1 sm:ml-3 break-words">${address.email}</span>
           </p>
         </div>
-
-      </div>
-    `;
+      </div>`;
   };
 
   paginatedAddresses.forEach((address, index) => {
     const actualIndex = start + index;
     const EachName = document.createElement('div');
-    EachName.className =
-      'bg-white m-2 px-4 py-2 rounded shadow cursor-pointer border hover:bg-gray-100 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)] transition';
+    EachName.className = 'bg-white m-2 px-4 py-1 rounded shadow cursor-pointer border hover:bg-gray-100 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)] transition';
     EachName.innerHTML = `
       <div class="caveat-brush-regular flex items-center gap-4 sm:gap-6">
         <input type="checkbox" data-index="${actualIndex}" class="contact-checkbox w-4 h-4 sm:w-5 sm:h-5 rounded-full cursor-pointer accent-blue-500" />
@@ -576,7 +558,7 @@ if (!document.getElementById('sidebar-shrink-style')) {
       }
     });
 
-    leftContent.appendChild(EachName);
+    namesContainer.appendChild(EachName);
 
     if (index === 0) {
       EachName.classList.add('selected-name');
@@ -587,57 +569,70 @@ if (!document.getElementById('sidebar-shrink-style')) {
   if (!document.getElementById('selected-name-style')) {
     const style = document.createElement('style');
     style.id = 'selected-name-style';
-    style.innerHTML = `
-      .selected-name {
-        background-color: #c1c3c5ff !important;
-        color: white;
-      }
-    `;
+    style.innerHTML = ` .selected-name {   background-color: #c1c3c5ff !important; color: white; }`;
     document.head.appendChild(style);
   }
 
-  const paginationDiv = document.createElement('div');
-  paginationDiv.id = 'paginationDiv';
-  paginationDiv.className =
-    'caveat-brush-regular flex justify-center items-center mt-4 sm:mt-6 gap-2 py-4';
+const paginationDiv = document.createElement('div');
+paginationDiv.id = 'paginationDiv';
+paginationDiv.className = 'caveat-brush-regular flex justify-center items-center mt-auto py-4 border-t border-gray-300';
 
-  paginationDiv.innerHTML = `
-    <!-- Normal view -->
+paginationDiv.innerHTML = `
     <div id="pagination-expanded" class="flex items-center gap-2">
-      <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}
-        class="px-3 sm:px-4 py-1 sm:py-2 border rounded-full ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-100 hover:bg-gray-200'} shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
+      <button  onclick="changePage(${currentPage - 1})"
+        ${currentPage === 1 ? 'disabled' : ''}
+        class="px-3 sm:px-4 py-1 sm:py-2 border rounded-full 
+        ${currentPage === 1 
+          ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+          : 'bg-gray-100 hover:bg-gray-200 cursor-pointer'}
+        shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
         Prev
       </button>
+      
       <span class="text-gray-700 font-medium text-sm sm:text-base">
         Page ${currentPage} of ${totalPages}
       </span>
-      <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}
-        class="px-3 sm:px-4 py-1 sm:py-2 border rounded-full ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-100 hover:bg-gray-200'} shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
+      
+      <button  onclick="changePage(${currentPage + 1})"
+        ${currentPage === totalPages ? 'disabled' : ''}
+        class="px-3 sm:px-4 py-1 sm:py-2 border rounded-full 
+        ${currentPage === totalPages 
+          ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+          : 'bg-gray-100 hover:bg-gray-200 cursor-pointer'}
+        shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
         Next
       </button>
     </div>
 
-    <!-- Shrunk view -->
     <div id="pagination-shrunk" class="hidden items-center gap-2">
-      <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}
+      <button   onclick="changePage(${currentPage - 1})"
+        ${currentPage === 1 ? 'disabled' : ''}
         class="px-2 py-1 border rounded-full text-lg font-bold 
-        ${currentPage === 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-gray-100 hover:bg-gray-200 text-black'} 
+        ${currentPage === 1 
+          ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+          : 'bg-gray-100 hover:bg-gray-200 cursor-pointer'}
         shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
         &lt;
       </button>
-      <span class="text-gray-700 font-medium text-base">${currentPage}/${totalPages}</span>
-      <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}
+
+      <span class="text-gray-700 font-medium text-base">
+        ${currentPage}/${totalPages}
+      </span>
+
+      <button   onclick="changePage(${currentPage + 1})"
+        ${currentPage === totalPages ? 'disabled' : ''}
         class="px-2 py-1 border rounded-full text-lg font-bold 
-        ${currentPage === totalPages ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-gray-100 hover:bg-gray-200 text-black'} 
+        ${currentPage === totalPages 
+          ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+          : 'bg-gray-100 hover:bg-gray-200 cursor-pointer'}
         shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
         &gt;
       </button>
     </div>
   `;
 
-
-
-  leftContent.appendChild(paginationDiv);
+  leftContent.appendChild(namesContainer); 
+  leftContent.appendChild(paginationDiv); 
 
   mainContainer.appendChild(leftContent);
   mainContainer.appendChild(rightContent);
@@ -645,21 +640,26 @@ if (!document.getElementById('sidebar-shrink-style')) {
 }
 
 
+
 //============= Add Pagination ===============
 function addPagination(currentPage, totalPages) {
   const paginationDiv = document.createElement("div");
   paginationDiv.className = "caveat-brush-regular col-span-full flex justify-center items-center mt-6 gap-2";
+
   paginationDiv.innerHTML = `
-    <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? "disabled" : ""}
-      class="px-4 cursor-pointer py-2 border shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)] rounded-full ${currentPage === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-gray-100 hover:bg-gray-200"}">
+    <button   onclick="changePage(${currentPage - 1})"   ${currentPage === 1 ? "disabled" : ""}  class="px-4 py-2 border rounded-full shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]   ${currentPage === 1     ? "bg-gray-300 text-gray-500 cursor-not-allowed"     : "bg-gray-100 hover:bg-gray-200 cursor-pointer"}">
       Prev
     </button>
-    <span class="text-gray-700 font-medium">Page ${currentPage} of ${totalPages}</span>
-    <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? "disabled" : ""}
-      class="px-4 py-2 border cursor-pointer shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)] rounded-full ${currentPage === totalPages ? "bg-gray-300 cursor-not-allowed" : "bg-gray-100 hover:bg-gray-200"}">
+
+    <span class="text-gray-700 font-medium">
+      Page ${currentPage} of ${totalPages}
+    </span>
+
+    <button   onclick="changePage(${currentPage + 1})"   ${currentPage === totalPages ? "disabled" : ""}  class="px-4 py-2 border rounded-full shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]   ${currentPage === totalPages     ? "bg-gray-300 text-gray-500 cursor-not-allowed"     : "bg-gray-100 hover:bg-gray-200 cursor-pointer"}">
       Next
     </button>
   `;
+
   addressList.appendChild(paginationDiv);
 }
 
@@ -670,23 +670,20 @@ document.addEventListener('click',function(e){
   const card = e.target.closest('.address-card')
 
   if (!card) return;
-  // console.log('cardd',card);
+
+  if (
+    e.target.closest('button') ||
+    e.target.closest('a') ||
+    e.target.closest('svg') 
+  ) {
+    return;
+  }
   const checkbox = card.querySelector('.contact-checkbox') 
   
   if (!checkbox) return;
-  // console.log('cc',checkbox);
   if (e.target === checkbox) {
-    card.classList.add(
-        'ring-2',
-        'ring-blue-400',
-        'bg-blue-50',
-        'shadow-lg',
-        'shadow-[5px_5px_0px_0px_rgba(0,0,0,0.7)]'
-      );
+    card.classList.add( 'ring-2','ring-blue-400',  'bg-blue-50',  'shadow-lg',  'shadow-[5px_5px_0px_0px_rgba(0,0,0,0.7)]');
   }
-
-  console.log('cc',checkbox.checked);
-  
 
   checkbox.checked = !checkbox.checked;
   if (checkbox.checked) {
@@ -754,7 +751,6 @@ function deleteContact(index){
     let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
     contacts.splice(index, 1);
     localStorage.setItem("contacts", JSON.stringify(contacts));
-    showMessage("Contact deleted successfully!", "green");
     alert('address removed successfully')
     renderAddressCards();
   }
@@ -778,11 +774,9 @@ function downloadSingle(index){
   const a = document.createElement("a");
   a.href = URL.createObjectURL(file);
   a.download = `${contact.firstName}_${contact.lastName}_details.json`;
-  console.log('fie',file);
 
   a.click();
   URL.revokeObjectURL(a.href);
-  console.log('down',contact)
 }
 
 
@@ -790,24 +784,17 @@ function downloadSingle(index){
 //============ deleting slelected contacts ==============
 function deleteSelected(){
   if(confirm('Are you sure you want to delete this selected contact?')){
-
-    
     let contacts = JSON.parse(localStorage.getItem("contacts")) || []
     const checkboxes = document.querySelectorAll('.contact-checkbox:checked')
     
-    
     const indexesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index));
     contacts = contacts.filter((_, index) => !indexesToDelete.includes(index));
-    console.log('ddddd',indexesToDelete);
     
     localStorage.setItem("contacts", JSON.stringify(contacts));
     
-    console.log('ddd',checkboxes);
-    showMessage(`${indexesToDelete.length} address deleted successfully!`, "red");
     alert(`${indexesToDelete.length} address deleted successfully!`)
     renderAddressCards();
   }
-  
 }
 
 
@@ -886,10 +873,7 @@ function downloadSelected(){
 
   const indexesToDownload = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index));
 
-  console.log('ddd',indexesToDownload);
   contactToDownload = indexesToDownload.map(index=>contacts[index])
-
-  console.log('cc',contactToDownload);
 
   const dataStr = JSON.stringify(contactToDownload, null, 2);
   const file = new Blob([dataStr], { type: "application/json" });
@@ -897,12 +881,8 @@ function downloadSelected(){
   const a = document.createElement("a");
   a.href = URL.createObjectURL(file);
   a.download = `${indexesToDownload.length}address_details.json`;
-  console.log('fie',file);
-
   a.click();
-  URL.revokeObjectURL(a.href);
-  console.log('down',contactToDownload)
-  
+  URL.revokeObjectURL(a.href); 
 }
 
 
@@ -946,16 +926,14 @@ function handleFileUpload(event) {
       }
 
       localStorage.setItem("contacts", JSON.stringify(contacts));
-      console.log('Updated Contacts:', contacts);
       renderAddressCards();
     } catch (err) {
       alert('Invalid JSON file');
       console.error(err);
     }
 
-    event.target.value = ''; // reset input after import
+    event.target.value = ''; 
   };
-
   reader.readAsText(file);
 }
 

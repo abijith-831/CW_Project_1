@@ -15,9 +15,10 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap');
     </style>
+    <link rel="stylesheet" href="/styles/addressModal.css">
 </head>
 <body>
-    <div   class="flex flex-col w-full h-full items-center bg-[url('/public/bg-main-white.jpg')] bg-cover bg-center">
+    <div class="flex flex-col items-center bg-[url('/public/bg-main-white.jp')]">
             <div id="headingDiv"   class="p-4 hidden flex  items-center justify-center ">
                 <h1 class="caveat-brush-regular font-bold text-xl md:text-2xl lg:text-4xl">Address Form</h1>
             </div>
@@ -41,12 +42,12 @@
 
                 <div class=" flex items-center justify-between caveat-brush-regular">   
                     <label class="text-sm md:text-md  lg:text-xl" >Phone Number : </label>
-                    <input  class="shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border rounded-md w-[300px] px-2 mx-2"  id="phone" name="phone" type="text"  pattern="\d{10}" maxlength="10" title="phone number should be 10 digits" placeholder="enter your number">
+                    <input  class="shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border rounded-md w-[300px] px-2 mx-2"  id="phone" name="phone" type="text"  pattern="\d{10}" minlength="4" maxlength="11" title="phone number should be 10 digits" placeholder="enter your number">
                 </div> 
 
                 <div class=" flex items-center justify-between caveat-brush-regular">
                     <label class="text-sm md:text-md  lg:text-xl" for=""> Mobile Number : </label>
-                    <input id="mobile" class="shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border rounded-md w-[300px] ml-4 px-2 mx-2" type="text"  pattern="\d{10}" maxlength="10" title="phone number should be 10 digits"  placeholder="enter your mobile">
+                    <input id="mobile" class="shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border rounded-md w-[300px] ml-4 px-2 mx-2" type="text"  pattern="\d{10}" minlength="4" maxlength="11" title="phone number should be 10 digits"  placeholder="enter your mobile">
                 </div>
 
                 <div class=" flex items-center justify-between caveat-brush-regular">
@@ -115,7 +116,5 @@
             }
         });
     </script>
-
-
 </body>
 </html>

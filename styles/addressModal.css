@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ====== General Styles ====== */
+body {
+  @apply flex flex-col items-center bg-[url('/public/bg-main-white.jpg')];
+}
+
+.caveat-brush-regular {
+  @apply font-["Caveat Brush",cursive];
+}
+
+/* ====== Heading ====== */
+#headingDiv {
+  @apply p-4 hidden flex items-center justify-center;
+}
+
+#headingDiv h1 {
+  @apply font-bold text-xl md:text-2xl lg:text-4xl;
+}
+
+/* ====== Form Container ====== */
+#formDiv {
+  @apply flex items-center justify-center hidden shadow-lg border bg-gray-100 p-6 rounded-xl text-lg;
+}
+
+#addressForm {
+  @apply space-y-3;
+}
+
+/* ====== Label + Input Fields ====== */
+#addressForm label {
+  @apply text-sm md:text-md lg:text-xl;
+}
+
+#addressForm input,
+#addressForm textarea {
+  @apply border rounded-md w-[300px] px-2 mx-2 shadow-md;
+}
+
+#addressForm textarea {
+  @apply min-h-[80px];
+}
+
+/* ====== Buttons ====== */
+#resetBtn,
+#submitButton {
+  @apply border rounded-full px-6 py-1 text-sm md:text-md lg:text-xl cursor-pointer transition-transform duration-300 caveat-brush-regular;
+}
+
+#resetBtn {
+  @apply shadow-md bg-red-400 hover:bg-red-500;
+}
+
+#submitButton {
+  @apply shadow-md bg-gray-200 text-black hover:scale-105;
+}
+
+/* ====== Message ====== */
+#message {
+  @apply mt-4 min-h-[4rem] text-lg font-semibold text-center text-green-600 hidden;
+}
+
+/* ====== View Toggle ====== */
+.view-toggle {
+  @apply flex bg-gray-200 shadow-md rounded-full overflow-hidden text-xl cursor-pointer;
+}
+
+.view-toggle button {
+  @apply px-8 py-1 transition-all duration-500 caveat-brush-regular cursor-pointer;
+}
+
+.view-toggle #cardViewBtn {
+  @apply bg-black text-white;
+}
+
+/* ====== Address Section ====== */
+#addressList {
+  @apply my-4 w-11/12;
+}
+
+/* ====== Modal Styles ====== */
+#modalContainer {
+  @apply hidden fixed inset-0 flex justify-center items-center z-50 bg-black/70 backdrop-blur-sm bg-opacity-50;
+}
+
+#modalContainer > div {
+  @apply bg-white rounded-lg shadow-lg p-6 w-[90%] max-w-lg relative;
+}
+
+#closeModal {
+  @apply absolute top-3 right-3 text-black text-xl font-bold cursor-pointer;
+}
