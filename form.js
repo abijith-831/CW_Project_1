@@ -333,7 +333,7 @@ function displayCardView(paginatedAddresses, start, currentPage, totalPages, gri
     const actualIndex = start + index;
     const card = document.createElement("div");
 
-    card.className = ` address-card bg-white bg-[url('/public/bg-main-white.jpg')] bg-cover bg-center   cursor-pointer caveat-brush-regular rounded-lg border border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,0.7)]  hover:shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 relative   flex flex-col justify-between  w-full min-h-[280px] h-[280px]  <!-- 🔹 Fixed uniform height -->  p-4 `;
+    card.className = ` address-card bg-white bg-[url('./public/bg-main-white.jpg')] bg-cover bg-center   cursor-pointer caveat-brush-regular rounded-lg border border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,0.7)]  hover:shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 relative   flex flex-col justify-between  w-full min-h-[280px] h-[280px]  <!-- 🔹 Fixed uniform height -->  p-4 `;
 
     card.innerHTML = `
       <div>
