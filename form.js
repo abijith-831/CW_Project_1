@@ -10,85 +10,119 @@
   });
 
   //=============== editing state tracking ===============
-  let isEditing = false;
-  let editingIndex = -1;
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
+const resetButton = document.getElementById('resetBtn');
+const submitButton = document.getElementById('submitButton');
 
-    const firstName = document.getElementById('firstName').value.trim();
-    const lastName = document.getElementById('lastName').value.trim();
-    const address = document.getElementById('address').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const mobile = document.getElementById('mobile').value.trim();
-    const email = document.getElementById('email').value.trim();
+let isEditing = false;
+let editingIndex = -1;
 
-    
-    const countryCode = "+" + phoneInput.getSelectedCountryData().dialCode;
-    const countryName = phoneInput.getSelectedCountryData().name;
-    const isoCode = phoneInput.getSelectedCountryData().iso2;
-    const fullNumber = countryCode + ' ' + phone  
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
 
-    
-    if(!firstName || !lastName || !address || !phone || !mobile || !email){
-      showMessage('please fill all the fields','red')
-        if (!firstName) document.getElementById("firstName").focus();
-        else if (!lastName) document.getElementById("lastName").focus();
-        else if (!address) document.getElementById("address").focus();
-        else if (!phone) document.getElementById("phone").focus();
-        else if (!mobile) document.getElementById("mobile").focus();
-        else if (!email) document.getElementById("email").focus();
-      return
-    }
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName = document.getElementById('lastName').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
+  const email = document.getElementById('email').value.trim();
 
-    //============== Create contact object==============
-    const contact = {
-      firstName,
-      lastName,
-      address,
-      phone: {
-        raw: phone,
-        fullNumber,
-        countryCode,
-        countryName,
-        isoCode,
-      },
-      mobile,
-      email,
-    };
+  const countryCode = "+" + phoneInput.getSelectedCountryData().dialCode;
+  const countryName = phoneInput.getSelectedCountryData().name;
+  const isoCode = phoneInput.getSelectedCountryData().iso2;
+  const fullNumber = countryCode + ' ' + phone;
 
-    // =========== fetch existing contacts from localstorage ==========
-    let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+  if (!firstName || !lastName || !address || !phone || !mobile || !email) {
+  showMessage("Please fill all the fields", "red");
 
-    if (isEditing) {
-      //  ========== update existing contact ==========
-      contacts[editingIndex] = contact;
-      alert('Address updated successfully') 
-      //========= reset editing mode =============
-      isEditing = false;
-      editingIndex = -1;
-      document.getElementById('submitButton').textContent = "Submit";
+  // Focus on the first empty field
+  if (!firstName) return document.getElementById("firstName").focus();
+  if (!lastName) return document.getElementById("lastName").focus();
+  if (!address) return document.getElementById("address").focus();
+  if (!phone) return document.getElementById("phone").focus();
+  if (!mobile) return document.getElementById("mobile").focus();
+  if (!email) return document.getElementById("email").focus();
+
+  return;
+}
+
+
+  const contact = {
+    firstName,
+    lastName,
+    address,
+    phone: {
+      raw: phone,
+      fullNumber,
+      countryCode,
+      countryName,
+      isoCode,
+    },
+    mobile,
+    email,
+  };
+
+  let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+
+  if (isEditing) {
+    contacts[editingIndex] = contact;
+    alert("Address updated successfully");
+  } else {
+    contacts.unshift(contact);
+    alert("Address saved successfully");
+  }
+
+  localStorage.setItem("contacts", JSON.stringify(contacts));
+
+  form.reset();
+  closeModal();
+  renderAddressCards();
+
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.address-card');
+    let cardToHighlight;
+
+    if (isEditing && editingIndex >= 0) {
+      cardToHighlight = cards[editingIndex];
     } else {
-      //======== add new contact ==========
-      contacts.unshift(contact);
-      alert('Address saved successfully ')
+      cardToHighlight = cards[0];
     }
-    // ============= s ave updated contacts back to localstorage ==============
-    localStorage.setItem("contacts", JSON.stringify(contacts));
 
-    form.reset();
-    closeModal();
-    renderAddressCards();
-  });
+    if (cardToHighlight) {
+      cardToHighlight.classList.add(
+        'ring-2',
+        'ring-blue-400',
+        'bg-blue-100',
+        'shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]'
+      );
 
-  const resetButton = document.getElementById("resetBtn");
-  resetButton.addEventListener('click',()=>{
-    document.getElementById('submitButton').textContent = "Submit";
+      cardToHighlight.scrollIntoView({ behavior: "smooth", block: "center" });
+
+      setTimeout(() => {
+        cardToHighlight.classList.remove(
+          'ring-2',
+          'ring-blue-400',
+          'bg-blue-100',
+          'shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]'
+        );
+      }, 2000);
+    }
+
     isEditing = false;
     editingIndex = -1;
-  })
+    submitButton.textContent = "Submit";
+  }, 150);
+});
 
-    
+
+// Reset button clears editing state
+resetButton.addEventListener("click", () => {
+  submitButton.textContent = "Submit";
+  isEditing = false;
+  editingIndex = -1;
+});
+
+
 //==================== show message ====================
 function showMessage(text, color) {
   message.textContent = text;
@@ -99,6 +133,11 @@ function showMessage(text, color) {
   form.removeEventListener("input", hideMessageOnFilled);
 
   form.addEventListener("input", hideMessageOnFilled);
+
+  setTimeout(() => {
+    message.classList.add("hidden");
+    message.textContent = "";
+  }, 2000);
 }
 
 function hideMessageOnFilled() {
@@ -182,18 +221,24 @@ function renderAddressCards(page = 1, maintainFocus = false) {
 
   const rightBar = document.createElement("div");
   rightBar.className = "flex items-center";
-  rightBar.innerHTML = `
-    <select id="itemsPerPageDropdown" class="border border-gray-400 text-sm md:text-md lg:text-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] px-3 py-2 rounded-full bg-white cursor-pointer caveat-brush-regular focus:ring-2 focus:ring-blue-400">
+  if (viewType === "card") {
+    rightBar.innerHTML += `
+      <select id="itemsPerPageDropdown" class="border border-gray-400 text-sm md:text-md lg:text-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] px-3 py-2 rounded-full bg-white cursor-pointer caveat-brush-regular focus:ring-2 focus:ring-blue-400">
         <option value="6" ${itemsPerPage === 6 ? 'selected' : ''}>6 Cards</option>
         <option value="12" ${itemsPerPage === 12 ? 'selected' : ''}>12 Cards</option>
         <option value="20" ${itemsPerPage === 20 ? 'selected' : ''}>20 Cards</option>
-    </select>
+      </select>
+    `;
+  }
 
-    <p id="selectedCount" class="ml-4 caveat-brush-regular text-gray-700 font-medium pt-1 text-sm md:text-md lg:text-lg">No Cards selected</p>
-    <button id="DownloadSelectedBtn" disabled onclick="downloadSelected()"  class="shadow-[3px_3px_0px_0px_rgba(0,0,0,0.5)] text-sm md:text-md lg:text-xl caveat-brush-regular bg-gray-400 cursor-not-allowed ml-4 text-white px-4 py-2 rounded-full">
+    rightBar.innerHTML += `
+    <p id="selectedCount" class="ml-4 caveat-brush-regular text-gray-700 font-medium pt-1 text-sm md:text-md lg:text-lg">
+      No Cards selected
+    </p>
+    <button id="DownloadSelectedBtn" disabled onclick="downloadSelected()" class="shadow-[3px_3px_0px_0px_rgba(0,0,0,0.5)] text-sm md:text-md lg:text-xl caveat-brush-regular bg-gray-400 cursor-not-allowed ml-4 text-white px-4 py-2 rounded-full">
       Download Selected
     </button>
-    <button id="deleteSelectedBtn" disabled onclick="deleteSelected()"  class="caveat-brush-regular text-sm md:text-md lg:text-xl shadow-[3px_3px_0px_0px_rgba(255,0,0,0.5)] bg-red-300 cursor-not-allowed ml-4 text-white px-4 py-2 rounded-full">
+    <button id="deleteSelectedBtn" disabled onclick="deleteSelected()" class="caveat-brush-regular text-sm md:text-md lg:text-xl shadow-[3px_3px_0px_0px_rgba(255,0,0,0.5)] bg-red-300 cursor-not-allowed ml-4 text-white px-4 py-2 rounded-full">
       Delete Selected
     </button>
   `;
@@ -204,11 +249,37 @@ function renderAddressCards(page = 1, maintainFocus = false) {
 
   let start = (page - 1) * itemsPerPage;
   let paginatedAddresses = addresses.slice(start, start + itemsPerPage);
-  document.getElementById('itemsPerPageDropdown').addEventListener('change', (e) => {
-    itemsPerPage = parseInt(e.target.value);
-    localStorage.setItem("itemsPerPage", itemsPerPage);
-    renderAddressCards(1);
-  });
+  const dropdown = document.getElementById('itemsPerPageDropdown');
+  if (dropdown) {
+    dropdown.addEventListener('change', (e) => {
+      itemsPerPage = parseInt(e.target.value);
+      localStorage.setItem("itemsPerPage", itemsPerPage);
+      renderAddressCards(1);
+    });
+  }
+
+
+// Handle Add Button click
+document.addEventListener("click", (e) => {
+  if (e.target && e.target.id === "addBtn") {
+    // Reset editing mode
+    isEditing = false;
+    editingIndex = -1;
+    submitButton.textContent = "Submit";
+    const modalContainer = document.getElementById("modalContainer");
+    const formElement = document.getElementById("addressForm");
+    const headingDiv = document.getElementById("headingDiv");
+    const modalContent = document.getElementById("modalContent");
+
+    // Clear and reattach content
+    modalContent.innerHTML = "";
+    headingDiv.classList.remove("hidden");
+    modalContent.appendChild(headingDiv);
+    modalContent.appendChild(formElement);
+
+    modalContainer.classList.remove("hidden");
+  }
+});
 
   //============= modal and address for logic ================
 const addButton = document.getElementById('addBtn');
@@ -222,7 +293,7 @@ const formElement = document.getElementById('addressForm');
 addButton.addEventListener('click', () => {
   headingDiv.classList.remove('hidden');
 
-  modalContent.innerHTML = ""; 
+  modalContent.innerHTML = ``; 
   modalContent.appendChild(headingDiv);
   modalContent.appendChild(formElement);
 
@@ -240,7 +311,7 @@ closeModal.addEventListener('click', () => {
   originalParent.classList.add('hidden');
 
   form.reset()
-});
+ })
 
   //=============== modal logic ends ===============
   const searchInput = document.getElementById('searchInput');
@@ -282,7 +353,7 @@ closeModal.addEventListener('click', () => {
 
 
   if (addresses.length === 0) {
-      addressList.className = ` my-4 bg-gray-200 px-4 bg-gray-300 bg-cover bg-center py-2 text-xl rounded-md gap-6 w-11/12 max-w-8xl h-[700px] `;
+    addressList.className = ` my-4 bg-gray-200 px-4 bg-gray-300 bg-cover bg-center py-2 text-xl rounded-md gap-6 w-11/12 max-w-8xl h-[700px] `;
     const emptyMsg = document.createElement("p");
     emptyMsg.textContent = currentSearchQuery  ? `No addresses found for "${currentSearchQuery}"`  : "No addresses found. Please add a new contact!";
     emptyMsg.className = "caveat-brush-regular text-gray-500 text-lg font-medium text-center mt-6 col-span-full";
@@ -310,10 +381,10 @@ function displayAddresses(paginatedAddresses, start, viewType, currentPage, tota
 
   //============= Card View Display ===============
 function displayCardView(paginatedAddresses, start, currentPage, totalPages, gridColsClass) {
-  addressList.className = ` my-4 bg-gray-200 px-4 bg-gray-300 bg-cover bg-center py-2  text-xl rounded-md w-11/12 max-w-8xl`;
+  addressList.className = ` my-4  px-4 bg-gray-300 bg-cover bg-center py-2   text-xl rounded-md w-11/12 max-w-8xl h-[80%]`;
 
   const cardsWrapper = document.createElement("div");
-  cardsWrapper.className = `  grid grid-cols-1 sm:grid-cols-2 ${gridColsClass}  gap-6 h-[600px] p-4 overflow-y-auto  scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200`;
+  cardsWrapper.className = `  grid grid-cols-1 sm:grid-cols-2 ${gridColsClass}  gap-6 h-[80%] p-4 overflow-y-auto  scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200`;
 
   // Add custom scrollbar only once
   if (!document.getElementById('custom-scrollbar-style')) {
@@ -333,7 +404,7 @@ function displayCardView(paginatedAddresses, start, currentPage, totalPages, gri
     const actualIndex = start + index;
     const card = document.createElement("div");
 
-    card.className = ` address-card bg-white bg-[url('/bg-main-white.jpg')] bg-cover bg-center   cursor-pointer caveat-brush-regular rounded-lg border border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,0.7)]  hover:shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 relative   flex flex-col justify-between  w-full min-h-[280px] h-[280px]  <!-- 🔹 Fixed uniform height -->  p-4 `;
+    card.className = ` address-card bg-white bg-[url('/public/bg-main-white.jpg')] bg-cover bg-center   cursor-pointer caveat-brush-regular rounded-lg border border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,0.7)]  hover:shadow-[7px_7px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 relative   flex flex-col justify-between  w-full  h-full  <!-- 🔹 Fixed uniform height -->  p-4 `;
 
     card.innerHTML = `
       <div>
@@ -382,28 +453,39 @@ function displayCardView(paginatedAddresses, start, currentPage, totalPages, gri
 
 //============= List View Display ===============
 function displayListView(paginatedAddresses, start, currentPage, totalPages) {
-  addressList.className = ` my-4 bg-gray-200 px-4 bg-gray-300 bg-cover bg-center py-2   text-xl rounded-md w-11/12 max-w-8xl`;
+  addressList.className = ` my-4 bg-gray-200 px-4 bg-gray-300 bg-cover bg-center py-2   text-xl rounded-md w-11/12 max-w-8xl h-[80%]`;
 
   const mainContainer = document.createElement('div');
-  mainContainer.className = `  w-full h-full flex flex-col lg:flex-row gap-4 p-2   h-[600px]`;
+  mainContainer.className = `  w-full  flex flex-col lg:flex-row gap-4 p-2 h-[90%] relative`;
 
   // Left sidebar
   const leftContent = document.createElement('div');
   leftContent.id = 'leftSidebar';
-  leftContent.className = `  w-full lg:w-1/4 bg-white rounded-lg pr-6 pl-2  relative flex flex-col h-[600px]`;
+  leftContent.className = `  w-full lg:w-1/4 bg-white rounded-lg pl-2 flex flex-col  transition-all duration-300`;
 
-  // Sidebar shrink button
+  // Sidebar shrink button - positioned OUTSIDE leftContent
   const shrinkButton = document.createElement('button');
   shrinkButton.id = 'shrinkBtn';
-  shrinkButton.className = ` fixed top-1/2 z-50   bg-gray-400 hover:bg-gray-700 text-white  rounded-full w-10 h-10 flex items-center justify-center   shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]  transition-all duration-200 lg:flex hidden`;
+  shrinkButton.className = `cursor-pointer absolute top-1/2 bg-gray-400 hover:bg-gray-700 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 lg:flex hidden`;
+  // shrinkButton.style.zIndex = '9999';
+  shrinkButton.style.transform = 'translateY(-50%)';
   shrinkButton.innerHTML = '<';
   shrinkButton.title = 'Toggle Sidebar';
-  leftContent.appendChild(shrinkButton);
 
   shrinkButton.addEventListener('click', () => {
     leftContent.classList.toggle('sidebar-shrunk');
     shrinkButton.innerHTML = leftContent.classList.contains('sidebar-shrunk') ? '>' : '<';
+    
+    // Update button position based on sidebar state
+    if (leftContent.classList.contains('sidebar-shrunk')) {
+      shrinkButton.style.left = '118px';
+    } else {
+      shrinkButton.style.left = 'calc(25% - 30px)'
+    }
   });
+
+  // Set initial position
+  shrinkButton.style.left = 'calc(25% - 12px)';
 
   // Sidebar shrink styles (once only)
   if (!document.getElementById('sidebar-shrink-style')) {
@@ -449,20 +531,21 @@ function displayListView(paginatedAddresses, start, currentPage, totalPages) {
       }
 
       #leftSidebar.sidebar-shrunk ~ div.lg\\:w-3\\/4 {
-        width: 100% !important;
+        width: calc(100% - 96px) !important;
+        transition: all 0.3s ease-in-out;
       }
 
       #leftSidebar.sidebar-shrunk .flex.items-center.justify-center.w-12.h-12,
       #leftSidebar.sidebar-shrunk .flex.items-center.justify-center.w-16.h-16 {
         width: 40px !important;
         height: 40px !important;
-        padding:10px;
+        padding: 10px;
         font-size: 1rem !important;
       }
 
       #leftSidebar.sidebar-shrunk .caveat-brush-regular {
         gap: 0.3rem !important;
-        padding:14px;
+        padding: 14px;
       }
     `;
     document.head.appendChild(style);
@@ -472,7 +555,7 @@ function displayListView(paginatedAddresses, start, currentPage, totalPages) {
   namesContainer.className = `  flex-1 overflow-y-auto pr-2 `;
 
   const rightContent = document.createElement('div');
-  rightContent.className = ` w-full lg:w-3/4 bg-white rounded-lg flex items-center   justify-center p-2 h-[600px]`;
+  rightContent.className = `p-8 w-full lg:w-3/4 bg-white rounded-lg flex items-center   justify-center p-2  transition-all duration-300`;
 
   const renderDetails = (address, index) => {
     const actualIndex = start + index;
@@ -482,16 +565,16 @@ function displayListView(paginatedAddresses, start, currentPage, totalPages) {
 
         <div class="flex flex-wrap items-center justify-between w-full mb-4 sm:mb-6 gap-3">
           <div class="flex flex-wrap gap-3 sm:gap-4 justify-center sm:justify-start">
-            <button onclick="editAddress(${actualIndex})" class="border border-black bg-blue-500 hover:bg-blue-600  text-white px-4 sm:px-5 py-2 rounded-full shadow-[3px_3px_0px_0px_rgba(0,0,255,0.7)]   transition-transform duration-200 hover:scale-105">
+            <button onclick="editAddress(${actualIndex})" class="border cursor-pointer border-black bg-blue-500 hover:bg-blue-600  text-white px-4 sm:px-5 py-2 rounded-full shadow-[3px_3px_0px_0px_rgba(0,0,255,0.7)]   transition-transform duration-200 hover:scale-105">
               Edit
             </button>
-            <button onclick="deleteContact(${actualIndex})" class="border border-black bg-red-500 hover:bg-red-600  text-white px-4 sm:px-5 py-2 rounded-full shadow-[3px_3px_0px_0px_rgba(255,0,0,1)]   transition-transform duration-200 hover:scale-105">
+            <button onclick="deleteContact(${actualIndex})" class="border cursor-pointer border-black bg-red-500 hover:bg-red-600  text-white px-4 sm:px-5 py-2 rounded-full shadow-[3px_3px_0px_0px_rgba(255,0,0,1)]   transition-transform duration-200 hover:scale-105">
               Delete
             </button>
           </div>
 
           <div class="mt-2 sm:mt-0">
-            <button onclick="downloadSingle(${actualIndex})" class="border border-black bg-gray-300 hover:bg-gray-400   text-black px-4 sm:px-5 py-2 rounded-full shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]   transition-transform duration-200 hover:scale-105">
+            <button onclick="downloadSingle(${actualIndex})" class="border cursor-pointer border-black bg-gray-300 hover:bg-gray-400   text-black px-4 sm:px-5 py-2 rounded-full shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]   transition-transform duration-200 hover:scale-105">
               Download
             </button>
           </div>
@@ -573,73 +656,72 @@ function displayListView(paginatedAddresses, start, currentPage, totalPages) {
     document.head.appendChild(style);
   }
 
-const paginationDiv = document.createElement('div');
-paginationDiv.id = 'paginationDiv';
-paginationDiv.className = 'caveat-brush-regular flex justify-center items-center mt-auto py-4 border-t border-gray-300';
+  const paginationDiv = document.createElement('div');
+  paginationDiv.id = 'paginationDiv';
+  paginationDiv.className = 'caveat-brush-regular flex justify-center items-center mt-auto py-4 border-t border-gray-300';
 
-paginationDiv.innerHTML = `
-    <div id="pagination-expanded" class="flex items-center gap-2">
-      <button  onclick="changePage(${currentPage - 1})"
-        ${currentPage === 1 ? 'disabled' : ''}
-        class="px-3 sm:px-4 py-1 sm:py-2 border rounded-full 
-        ${currentPage === 1 
-          ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-          : 'bg-gray-100 hover:bg-gray-200 cursor-pointer'}
-        shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
-        Prev
-      </button>
-      
-      <span class="text-gray-700 font-medium text-sm sm:text-base">
-        Page ${currentPage} of ${totalPages}
-      </span>
-      
-      <button  onclick="changePage(${currentPage + 1})"
-        ${currentPage === totalPages ? 'disabled' : ''}
-        class="px-3 sm:px-4 py-1 sm:py-2 border rounded-full 
-        ${currentPage === totalPages 
-          ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-          : 'bg-gray-100 hover:bg-gray-200 cursor-pointer'}
-        shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
-        Next
-      </button>
-    </div>
+  paginationDiv.innerHTML = `
+      <div id="pagination-expanded" class="flex items-center gap-2">
+        <button  onclick="changePage(${currentPage - 1})"
+          ${currentPage === 1 ? 'disabled' : ''}
+          class="px-3 sm:px-4 py-1 sm:py-2 border rounded-full 
+          ${currentPage === 1 
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+            : 'bg-gray-100 hover:bg-gray-200 cursor-pointer'}
+          shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
+          Prev
+        </button>
+        
+        <span class="text-gray-700 font-medium text-sm sm:text-base">
+          Page ${currentPage} of ${totalPages}
+        </span>
+        
+        <button  onclick="changePage(${currentPage + 1})"
+          ${currentPage === totalPages ? 'disabled' : ''}
+          class="px-3 sm:px-4 py-1 sm:py-2 border rounded-full 
+          ${currentPage === totalPages 
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+            : 'bg-gray-100 hover:bg-gray-200 cursor-pointer'}
+          shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
+          Next
+        </button>
+      </div>
 
-    <div id="pagination-shrunk" class="hidden items-center gap-2">
-      <button   onclick="changePage(${currentPage - 1})"
-        ${currentPage === 1 ? 'disabled' : ''}
-        class="px-2 py-1 border rounded-full text-lg font-bold 
-        ${currentPage === 1 
-          ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-          : 'bg-gray-100 hover:bg-gray-200 cursor-pointer'}
-        shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
-        &lt;
-      </button>
+      <div id="pagination-shrunk" class="hidden items-center gap-2">
+        <button   onclick="changePage(${currentPage - 1})"
+          ${currentPage === 1 ? 'disabled' : ''}
+          class="px-2  border rounded-full text-lg font-bold 
+          ${currentPage === 1 
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+            : 'bg-gray-100 hover:bg-gray-200 cursor-pointer'}
+          shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
+          &lt;
+        </button>
 
-      <span class="text-gray-700 font-medium text-base">
-        ${currentPage}/${totalPages}
-      </span>
+        <h6 class="text-gray-700 font-medium text-base">
+          ${currentPage}/${totalPages}
+        </h6>
 
-      <button   onclick="changePage(${currentPage + 1})"
-        ${currentPage === totalPages ? 'disabled' : ''}
-        class="px-2 py-1 border rounded-full text-lg font-bold 
-        ${currentPage === totalPages 
-          ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-          : 'bg-gray-100 hover:bg-gray-200 cursor-pointer'}
-        shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
-        &gt;
-      </button>
-    </div>
-  `;
+        <button   onclick="changePage(${currentPage + 1})"
+          ${currentPage === totalPages ? 'disabled' : ''}
+          class="px-2  border rounded-full text-lg font-bold 
+          ${currentPage === totalPages 
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+            : 'bg-gray-100 hover:bg-gray-200 cursor-pointer'}
+          shadow-[3px_3px_0px_0px_rgba(0,0,0,0.7)]">
+          &gt;
+        </button>
+      </div>
+    `;
 
-  leftContent.appendChild(namesContainer); 
-  leftContent.appendChild(paginationDiv); 
+    leftContent.appendChild(namesContainer); 
+    leftContent.appendChild(paginationDiv); 
 
-  mainContainer.appendChild(leftContent);
-  mainContainer.appendChild(rightContent);
-  addressList.appendChild(mainContainer);
+    mainContainer.appendChild(leftContent);
+    mainContainer.appendChild(rightContent);
+    mainContainer.appendChild(shrinkButton); // Add button to mainContainer instead of leftContent
+    addressList.appendChild(mainContainer);
 }
-
-
 
 //============= Add Pagination ===============
 function addPagination(currentPage, totalPages) {
@@ -911,7 +993,6 @@ function handleFileUpload(event) {
   reader.onload = function (e) {
     try {
       const importedData = JSON.parse(e.target.result);
-      console.log('Imported JSON:', importedData);
 
       let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
 
