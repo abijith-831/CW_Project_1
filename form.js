@@ -263,6 +263,7 @@ function renderAddressCards(page = 1, maintainFocus = false) {
 document.addEventListener("click", (e) => {
   if (e.target && e.target.id === "addBtn") {
     // Reset editing mode
+    form.reset()
     isEditing = false;
     editingIndex = -1;
     submitButton.textContent = "Submit";
